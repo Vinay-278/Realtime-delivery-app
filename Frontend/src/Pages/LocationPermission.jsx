@@ -17,7 +17,7 @@ const LocationPermission = () =>{
                   const longitude = pos.coords.longitude;
                   console.log(latitude, longitude)
                   const res = await axios.post(
-                    "http://localhost:5173/api/location",
+                    "http://localhost:4000/api/location",
                     {
                         latitude,
                         longitude
