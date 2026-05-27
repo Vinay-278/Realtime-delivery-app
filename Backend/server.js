@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import cors from "cors"
 import Connect_db from "./config/db.js"
 import authRoutes from './Routes/authRoutes.js'
+import location from './Routes/locationRoutes.js'
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.get("/",(req,res)=>{
 });
 
 app.use("/api",authRoutes)
+app.use("/api",location)
 
 const PORT= process.env.PORT || 3000;
 

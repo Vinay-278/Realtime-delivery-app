@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Loader from './Loader'
 import axios from 'axios'
 
+
 const LocationPermission = () =>{
     const [loading,setLoading] = useState("loading")
     const handleLocation = () => {
@@ -28,9 +29,6 @@ const LocationPermission = () =>{
               }
               catch(error){
                   console.log(error);
-              }
-              finally{
-                setLoading("reject")
               }
           },
           (error) =>{
