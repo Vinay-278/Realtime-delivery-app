@@ -16,7 +16,7 @@ createRoot(document.getElementById('root')).render(
     {/* <Forgot/> */}
     {/* <Verification/> */}
     {/* <Change/> */}
-    <LocationPermission/>
+    {/* <LocationPermission/> */}
 
   </StrictMode>,
 )
