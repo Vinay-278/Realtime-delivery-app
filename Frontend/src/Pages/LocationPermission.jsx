@@ -1,12 +1,56 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Loader from './Loader'
+import axios from 'axios'
 
-const LocationPermission = () => {
+const LocationPermission = () =>{
+    const [loading,setLoading] = useState("loading")
+    const handleLocation = () => {
+        if(!navigator.geolocation){
+            alert("Geolocation not supported")
+            return ;
+        }
+        setLoading("success")
+        navigator.geolocation.getCurrentPosition(
+          async (pos) =>{
+              try{
+                  const latitude = pos.coords.latitude;
+                  const longitude = pos.coords.longitude;
+                  console.log(latitude, longitude)
+                  const res = await axios.post(
+                    "http://localhost:5173/api/location",
+                    {
+                        latitude,
+                        longitude
+                    }
+                  )
+                  console.log(res.data)
+                  alert("Location fetched successfully")
+              }
+              catch(error){
+                  console.log(error);
+              }
+              finally{
+                setLoading("reject")
+              }
+          },
+          (error) =>{
+              console.log(error)
+              if(error.code === 1){
+                  alert("Permission denied")
+              }
+              else{
+                alert("Unable to fetch location")
+              }
+              setLoading("reject")
+          }
+        )
+    }
+
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
       <div className="w-[350px] flex flex-col bg-white p-6 rounded-xl shadow-lg gap-8">
-        <Loader state={"reject"} />
-        <button className="mt-6 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition">
+        <Loader state={loading} />
+        <button onClick={handleLocation} className="mt-6 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition">
           ACCESS LOCATION <div></div>
         </button>
         <div className="font-medium">
