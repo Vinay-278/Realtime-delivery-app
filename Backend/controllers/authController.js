@@ -10,6 +10,7 @@ export const registerUser = async (req, res) => {
 
     if (!name || !email || !password || !phone) {
       return res.status(400).json({
+        success: false,
         message: "All fields are required",
       });
     }
@@ -18,6 +19,7 @@ export const registerUser = async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({
+        success: false,
         message: "User already exists",
       });
     }
@@ -31,16 +33,18 @@ export const registerUser = async (req, res) => {
       password: hashed,
       phone,
       otp,
-      expiresAt: Date.now() + 5 * 60 * 1000, 
+      expiresAt: Date.now() + 5 * 60 * 1000,
     });
 
     await sendOtpMail(email, otp);
 
     return res.status(201).json({
+      success: true,
       message: "OTP sent successfully",
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -54,6 +58,7 @@ export const verifyOtp = async (req, res) => {
 
     if (!storedData) {
       return res.status(400).json({
+        success: false,
         message: "OTP expired or invalid",
       });
     }
@@ -61,12 +66,14 @@ export const verifyOtp = async (req, res) => {
     if (Date.now() > storedData.expiresAt) {
       otpStore.delete(phone);
       return res.status(400).json({
+        success: false,
         message: "OTP expired",
       });
     }
 
     if (storedData.otp != otp) {
       return res.status(400).json({
+        success: false,
         message: "Incorrect OTP",
       });
     }
@@ -81,11 +88,13 @@ export const verifyOtp = async (req, res) => {
     otpStore.delete(phone);
 
     return res.status(201).json({
+      success: true,
       message: "User registered successfully",
       user,
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -97,6 +106,7 @@ export const changePassword = async (req, res) => {
 
     if (!phone || !email) {
       return res.status(400).json({
+        success: false,
         message: "All fields are required",
       });
     }
@@ -105,6 +115,7 @@ export const changePassword = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: "User not found",
       });
     }
@@ -113,7 +124,7 @@ export const changePassword = async (req, res) => {
 
     otpStore.set(phone, {
       otp,
-      expiresAt: Date.now() + 5 * 60 * 1000, 
+      expiresAt: Date.now() + 5 * 60 * 1000,
       type: "RESET_PASSWORD",
     });
 
@@ -124,6 +135,7 @@ export const changePassword = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -137,6 +149,7 @@ export const verifyChangePassword = async (req, res) => {
 
     if (!stored) {
       return res.status(400).json({
+        success: false,
         message: "OTP invalid or expired",
       });
     }
@@ -144,12 +157,14 @@ export const verifyChangePassword = async (req, res) => {
     if (Date.now() > stored.expiresAt) {
       otpStore.delete(phone);
       return res.status(400).json({
+        success: false,
         message: "OTP expired",
       });
     }
 
     if (stored.otp != otp) {
       return res.status(400).json({
+        success: false,
         message: "Incorrect OTP",
       });
     }
@@ -161,10 +176,53 @@ export const verifyChangePassword = async (req, res) => {
     otpStore.delete(phone);
 
     return res.status(200).json({
+      success: true,
       message: "Password updated successfully",
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User logged in successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
