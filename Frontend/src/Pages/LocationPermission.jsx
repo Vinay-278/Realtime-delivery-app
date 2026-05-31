@@ -10,10 +10,10 @@ const LocationPermission = () =>{
             alert("Geolocation not supported")
             return ;
         }
-        setLoading("success")
         navigator.geolocation.getCurrentPosition(
           async (pos) =>{
               try{
+                  setLoading("success");
                   const latitude = pos.coords.latitude;
                   const longitude = pos.coords.longitude;
                   console.log(latitude, longitude)
