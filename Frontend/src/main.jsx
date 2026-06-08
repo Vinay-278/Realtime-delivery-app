@@ -8,6 +8,7 @@ import Forgot from './Pages/Forgot.jsx'
 import Verification from './Pages/verification.jsx'
 import Change from './Pages/Change.jsx'
 import LocationPermission from './Pages/LocationPermission.jsx'
+import Navbar from './Pages/Navbar.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -16,7 +17,7 @@ createRoot(document.getElementById('root')).render(
     {/* <Forgot/> */}
     {/* <Verification/> */}
     {/* <Change/> */}
-    <LocationPermission/>
-
+    {/* <LocationPermission/> */}
+    <Navbar/>
   </StrictMode>,
 )

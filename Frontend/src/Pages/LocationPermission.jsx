@@ -17,6 +17,12 @@ const LocationPermission = () =>{
                   const latitude = pos.coords.latitude;
                   const longitude = pos.coords.longitude;
                   console.log(latitude, longitude)
+                  // address fetch using open street map
+                  const addressRes = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+                  );
+                  const addressData = await addressRes.json();
+                  console.log("Address: ", addressData.display_name)
                   const res = await axios.post(
                     "http://localhost:4000/api/location",
                     {
